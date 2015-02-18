@@ -1,0 +1,20 @@
+{
+  "name": "cereb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -w -r should --compilers js:babel/register"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "immutable": "^3.6.2",
+    "shallow-equals": "0.0.0"
+  },
+  "devDependencies": {
+    "babel": "^4.3.0",
+    "mocha": "^2.1.0",
+    "should": "^5.0.0"
+  }
+}
