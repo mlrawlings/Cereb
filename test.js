@@ -76,17 +76,6 @@ describe('Cereb', function() {
 
 		ref.a.unshift(0).push(4)
 	})
-	it('should return a new reference from update methods', function(done) {
-		var data = { a:[] }
-		  , ref = new Cereb(data, function(updatedRef) {
-		  	//updatedRef.a.should.equal(updatedA)
-		  	done()
-		  })
-		  , updatedA
-
-		updatedA = ref.a.unshift(0)
-		updatedA.constructor.name.should.match(/Reference$/)
-	})
 	it('should batch updates', function(done) {
 		var data = { a:[1,2,3] }
 		  , ref = new Cereb(data, function(updatedRef) {
@@ -96,6 +85,21 @@ describe('Cereb', function() {
 		  })
 
 		ref.a.unshift(0)
-		setImmediate(function() {ref.a.push(9)})
+		setImmediate(function() {
+			ref.a.push(9)
+			ref.a.val().size.should.equal(3) //changes have not been made yet
+		})
+	})
+	it('should throw if you try to update an out-of-date reference???', function(done) {
+		var data = { a:[1,2,3] }
+		  , ref = new Cereb(data, function(updatedRef) {
+		  	(function() {
+		  		ref.a.unshift(5)
+		  	}).should.throw(/out of date/)
+		  	done()
+		  })
+
+		ref.a.unshift(0)
 	})
 })
+
