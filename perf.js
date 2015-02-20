@@ -1,5 +1,6 @@
 var Cereb = require('./index')
   , Immutable = require('immutable')
+  , Cortex = require('cortexjs')
 
 describe('Performance', function() {
 	describe('push x50000', function() {
@@ -12,6 +13,20 @@ describe('Performance', function() {
 		})
 		it('Cereb (queue only)', function() {
 			var a = new Cereb([])
+
+			for(var i = 0; i < 50000; i++) {
+				a.push(4)
+			}
+		})
+		it('Cortex', function(done) {
+			var a = new Cortex([], function() { done() })
+
+			for(var i = 0; i < 50000; i++) {
+				a.push(4)
+			}
+		})
+		it('Cortex (queue only)', function() {
+			var a = new Cortex([])
 
 			for(var i = 0; i < 50000; i++) {
 				a.push(4)
@@ -45,6 +60,12 @@ describe('Performance', function() {
 			}
 		})
 
+		it('Cortex', function() {
+			for(var i = 0; i < 100; i++) {
+				new Cortex(obj1024)
+			}
+		})
+
 		it('Immutable.fromJS', function() {
 			for(var i = 0; i < 100; i++) {
 				Immutable.fromJS(obj1024)
@@ -72,6 +93,12 @@ describe('Performance', function() {
 			}
 		})
 
+		it('Cortex', function() {
+			for(var i = 0; i < 50; i++) {
+				new Cortex(createNested(4, 5))
+			}
+		})
+
 		it('Immutable.fromJS', function() {
 			for(var i = 0; i < 50; i++) {
 				Immutable.fromJS(createNested(4, 5))
@@ -93,6 +120,8 @@ describe('Performance', function() {
 		  , immutable = Immutable.fromJS(obj)
 		  , cereb = new Cereb(immutable)
 		  , cerebQ = new Cereb(immutable)
+		  , cortex = new Cortex(obj)
+		  , cortexQ = new Cortex(obj)
 		
 		function createNested(keys, levels) {
 			if(levels == 0)
@@ -118,6 +147,22 @@ describe('Performance', function() {
 		it('Cereb (queue only)', function() {
 			for(var i = 0; i < 50000; i++) {
 				cerebQ.x0.x0.x0.set(123)
+			}
+		})
+
+		it('Cortex', function(done) {
+			cortex.on('update', function() {
+				done()
+			})
+
+			for(var i = 0; i < 50000; i++) {
+				cortex.x0.x0.x0.set(123)
+			}
+		})
+
+		it('Cortex (queue only)', function() {
+			for(var i = 0; i < 50000; i++) {
+				cortexQ.x0.x0.x0.set(123)
 			}
 		})
 
