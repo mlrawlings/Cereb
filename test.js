@@ -21,6 +21,12 @@ describe('Cereb', function() {
 
 		Immutable.is(ref.val(), new Immutable.Map(data)).should.be.true
 	})
+	it('should "be" the data', function() {
+		var data = { a:1 }
+		  , ref = new Cereb(data)
+
+		;(ref.a == 1).should.be.true
+	})
 	it('should nest references', function() {
 		var data = { a:{ b:{ c:1 , d:[1,2,3] } } }
 		  , ref = new Cereb(data)
