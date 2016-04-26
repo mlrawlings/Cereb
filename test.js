@@ -15,30 +15,37 @@ describe('Cereb', function() {
 		new Cereb('').constructor.name.should.equal('StringReference')
 		new Cereb(true).constructor.name.should.equal('BooleanReference')
 	})
-	it('should contain the data as an Immutable', function() {
+	/*it('should contain the data as an Immutable', function() {
 		var data = { a:1 }
 		  , ref = new Cereb(data)
 
-		Immutable.is(ref.val(), new Immutable.Map(data)).should.be.true
+		Immutable.is(ref.valueOf(), new Immutable.Map(data)).should.be.true
+	})*/
+	it('should enumerate the keys', function() {
+		var data = { a:1 }
+		  , ref = new Cereb(data)
+
+		Object.keys(ref).should.eql(['a'])
 	})
 	it('should "be" the data', function() {
 		var data = { a:1 }
 		  , ref = new Cereb(data)
 
 		;(ref.a == 1).should.be.true
+		;('I have '+ref.a+' mouse.').should.equal('I have 1 mouse.')
 	})
 	it('should nest references', function() {
 		var data = { a:{ b:{ c:1 , d:[1,2,3] } } }
 		  , ref = new Cereb(data)
 
 		ref.a.b.c.constructor.name.should.match(/Reference$/)
-		ref.a.b.c.val().should.equal(1)
-		ref.a.b.d[0].val().should.equal(1)
+		ref.a.b.c.valueOf().should.equal(1)
+		ref.a.b.d[0].valueOf().should.equal(1)
 	})
 	it('should be able to listen for changes', function(done) {
 		var data = { a:1, b:2 }
 		  , ref = new Cereb(data, function(updatedRef) {
-		  	updatedRef.a.val().should.equal(0)
+		  	updatedRef.a.valueOf().should.equal(0)
 		  	done()
 		  })
 
@@ -57,7 +64,7 @@ describe('Cereb', function() {
 		var data = { a:1, b:2 }
 		  , ref = new Cereb(data, function(updatedRef) {
 		  	ref.should.not.equal(updatedRef)
-		  	ref.a.val().should.equal(1)
+		  	ref.a.valueOf().should.equal(1)
 		  	done()
 		  })
 
@@ -66,7 +73,7 @@ describe('Cereb', function() {
 	it('should proxy Immutable update methods', function(done) {
 		var data = { a:[1,2,3] }
 		  , ref = new Cereb(data, function(updatedRef) {
-		  	updatedRef.a[0].val().should.equal(0)
+		  	updatedRef.a[0].valueOf().should.equal(0)
 		  	done()
 		  })
 
@@ -75,8 +82,8 @@ describe('Cereb', function() {
 	it('should allow chaining methods', function(done) {
 		var data = { a:[1,2,3] }
 		  , ref = new Cereb(data, function(updatedRef) {
-		  	updatedRef.a[0].val().should.equal(0)
-		  	updatedRef.a[4].val().should.equal(4)
+		  	updatedRef.a[0].valueOf().should.equal(0)
+		  	updatedRef.a[4].valueOf().should.equal(4)
 		  	done()
 		  })
 
@@ -85,15 +92,15 @@ describe('Cereb', function() {
 	it('should batch updates', function(done) {
 		var data = { a:[1,2,3] }
 		  , ref = new Cereb(data, function(updatedRef) {
-		  	updatedRef.a[0].val().should.equal(0)
-		  	updatedRef.a[4].val().should.equal(9)
+		  	updatedRef.a[0].valueOf().should.equal(0)
+		  	updatedRef.a[4].valueOf().should.equal(9)
 		  	done()
 		  })
 
 		ref.a.unshift(0)
 		setImmediate(function() {
 			ref.a.push(9)
-			ref.a.val().size.should.equal(3) //changes have not been made yet
+			ref.a.valueOf().size.should.equal(3) //changes have not been made yet
 		})
 	})
 	it('should throw if you try to update an out-of-date reference???', function(done) {
